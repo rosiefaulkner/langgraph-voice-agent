@@ -4,4 +4,5 @@ from typing import Annotated, List
 
 
 class AgentState(BaseModel):
-    messages: Annotated[List, add_messages]
+    messages: Annotated[List, add_messages] = []
+    customer_id: str = ""
