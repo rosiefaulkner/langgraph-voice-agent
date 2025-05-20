@@ -5,4 +5,3 @@ from typing import Annotated, List
 
 class AgentState(BaseModel):
     messages: Annotated[List, add_messages]
-    end: bool = False

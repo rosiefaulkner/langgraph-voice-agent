@@ -1,10 +1,11 @@
-from langchain_core.messages import AIMessage, AIMessageChunk
+from langchain_core.messages import AIMessage, AIMessageChunk, HumanMessage
 from langgraph.graph import StateGraph
 from typing import AsyncGenerator
 import asyncio
 
 from state import AgentState
-from graph import Agent
+from voice_graph import voice_graph
+from assistant_graph import agent_graph
 from tools import session
 
 
@@ -50,7 +51,6 @@ async def stream_graph_response(
             continue
 
 async def main():
-    agent = Agent(name="Scout")
     config = {"configurable": {"thread_id": "thread-1"}}
 
     # Initialize the input state outside the loop for the first turn
@@ -59,22 +59,23 @@ async def main():
     while True:
         async for response in stream_graph_response(
             input = current_input, 
-            graph = agent.graph, 
+            graph = voice_graph, 
             config = config
             ):
             print(response, end="", flush=True)
             
-        # After streaming, clear the current_input for the next iteration
-        current_input = AgentState(messages=[])
-
         # Get the latest state to check if the graph ended
-        thread_state = agent.graph.get_state(config=config)
+        thread_state = voice_graph.get_state(config=config)
 
-        if thread_state.values.get("end", False): # Use .get() for safer access
-            print("\nGraph finished.")
+        # Check for exit command in the last human message
+        messages = thread_state.values.get("messages")
+        human_messages = [msg for msg in messages if isinstance(msg, HumanMessage)]
+        if "exit" in human_messages[-1].content.lower() or "quit" in human_messages[-1].content.lower():
+            print("\nExit command received. Ending conversation.")
             break
 
-        # Print expenses if available in the state
+        current_input = AgentState(messages=[])
+
         if session.expenses:
             print("\n\nExpenses:", session.expenses)
         print("")
