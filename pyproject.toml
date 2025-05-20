@@ -4,4 +4,17 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "elevenlabs>=1.59.0",
+    "langchain-openai>=0.3.17",
+    "langgraph>=0.4.5",
+    "pydantic>=2.11.4",
+    "python-dotenv>=1.1.0",
+    "scipy>=1.15.3",
+    "sounddevice>=0.5.2",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+]
