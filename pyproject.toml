@@ -1,17 +1,22 @@
 [project]
-name = "ai-agents-hackathon"
+name = "langgraph-voice-agent"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "elevenlabs>=1.59.0",
+    "langchain-mcp-adapters>=0.1.1",
     "langchain-openai>=0.3.17",
     "langgraph>=0.4.5",
+    "lxml>=5.4.0",
+    "mcp>=1.9.0",
+    "pandas>=2.2.3",
+    "psycopg2-binary>=2.9.10",
     "pydantic>=2.11.4",
     "python-dotenv>=1.1.0",
     "scipy>=1.15.3",
     "sounddevice>=0.5.2",
+    "sqlalchemy>=2.0.41",
 ]
 
 [dependency-groups]

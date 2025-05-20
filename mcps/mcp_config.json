@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "db": {
+            "command": "python",
+            "args": [
+                "/Users/kennethliao/projects/tutorials/langgraph-voice-agent/mcps/local_servers/db.py"
+            ],
+            "transport": "stdio"
+        }
+    }
+}
