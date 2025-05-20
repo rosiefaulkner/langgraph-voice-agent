@@ -8,3 +8,15 @@ wheels/
 
 # Virtual environments
 .venv
+
+# macOS
+.DS_Store
+
+# Environment variables
+.env*
+
+# Dependency lock file
+uv.lock
+
+# Cursor files
+.cursor
