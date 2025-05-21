@@ -52,33 +52,45 @@ async def stream_graph_response(
 
 async def main():
     config = {"configurable": {"thread_id": "thread-1"}}
+    customer_id = "e6535c6e-d9a4-4e95-a100-8224494fa01f"
+
+    # Get tools from our MCP server
+    client = MultiServerMCPClient(connections=mcp_config["mcpServers"])
+    tools = await client.get_tools()
+
+    agent_graph = Agent(tools=tools).build_graph()
 
     # Initialize the input state outside the loop for the first turn
-    current_input = AgentState(messages=[])
+    initial_input = AgentState(customer_id=customer_id)
 
     while True:
-        async for response in stream_graph_response(
-            input = current_input, 
-            graph = voice_graph, 
-            config = config
-            ):
-            print(response, end="", flush=True)
-            
-        # Get the latest state to check if the graph ended
-        thread_state = voice_graph.get_state(config=config)
+        # Record audio, transcribe, and add the human message to the state
+        print("\n\nSpeak now, then press Enter to stop recording...")
+        transcribed_text = await record_audio_until_stop()
+        initial_input.messages.append(HumanMessage(content=transcribed_text))
 
-        # Check for exit command in the last human message
-        messages = thread_state.values.get("messages")
-        human_messages = [msg for msg in messages if isinstance(msg, HumanMessage)]
-        if "exit" in human_messages[-1].content.lower() or "quit" in human_messages[-1].content.lower():
+        # check exit condition
+        if transcribed_text.lower().count("exit") or transcribed_text.lower().count("quit"):
             print("\nExit command received. Ending conversation.")
             break
 
-        current_input = AgentState(messages=[])
+        print("\n ---- You ---- \n\n", transcribed_text, "\n")
 
-        if session.expenses:
-            print("\n\nExpenses:", session.expenses)
-        print("")
+        print("\n ---- Assistant ---- ")
+        async for response in stream_graph_response(
+            input = initial_input,
+            graph = agent_graph,
+            config = config
+            ):
+            print(response, end="", flush=True)
+
+        # Get the latest state
+        thread_state = agent_graph.get_state(config=config)
+        
+        # Play the assistant's response
+        last_message = thread_state.values.get("messages")[-1]
+        if isinstance(last_message, AIMessage):
+            await play_audio(last_message.content)
 
 
 if __name__ == "__main__":
