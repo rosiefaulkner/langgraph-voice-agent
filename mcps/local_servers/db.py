@@ -163,10 +163,10 @@ async def delete_expense(id: UUID) -> str:
 async def update_expense(
     id: UUID,
     customer_id: UUID,
-    name: Optional[str],
-    amount: Optional[float],
-    category: Optional[ExpenseCategory],
-    description: Optional[str],
+    name: Optional[str] = None,
+    amount: Optional[float] = None,
+    category: Optional[ExpenseCategory] = None,
+    description: Optional[str] = None,
     ) -> str:
     f"""Update an expense by id.
     
@@ -196,6 +196,7 @@ async def update_expense(
             expense.description = description
 
         session.commit()
+        session.refresh(expense)
     
     return Expense.model_validate(expense.__dict__).model_dump_json(indent=2)
 
