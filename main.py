@@ -1,12 +1,22 @@
+import logging
+# Configure logging to suppress HTTP request logs
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("openai").setLevel(logging.WARNING)
+
 from langchain_core.messages import AIMessage, AIMessageChunk, HumanMessage
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.graph import StateGraph
 from typing import AsyncGenerator
 import asyncio
+import json
 
 from state import AgentState
-from voice_graph import voice_graph
-from assistant_graph import agent_graph
-from tools import session
+from voice_utils import record_audio_until_stop, play_audio
+from assistant_graph import Agent
+
+
+with open("mcps/mcp_config.json") as f:
+    mcp_config = json.load(f)
 
 
 async def stream_graph_response(
@@ -39,7 +49,7 @@ async def stream_graph_response(
 
                 tool_name = tool_chunk.get("name", "")
                 args = tool_chunk.get("args", "")
-                
+
                 if tool_name:
                     tool_call_str = f"\n\n< TOOL CALL: {tool_name} >\n\n"
                 if args:
@@ -49,6 +59,7 @@ async def stream_graph_response(
             else:
                 yield message_chunk.content
             continue
+
 
 async def main():
     config = {"configurable": {"thread_id": "thread-1"}}
