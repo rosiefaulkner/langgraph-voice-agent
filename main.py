@@ -51,7 +51,7 @@ async def stream_graph_response(
                 args = tool_chunk.get("args", "")
 
                 if tool_name:
-                    tool_call_str = f"\n\n< TOOL CALL: {tool_name} >\n\n"
+                    tool_call_str = f"\n< TOOL CALL: {tool_name} >\n\n"
                 if args:
                     tool_call_str = args
 
@@ -72,22 +72,14 @@ async def main():
     agent_graph = Agent(tools=tools).build_graph()
 
     # Initialize the input state outside the loop for the first turn
-    initial_input = AgentState(customer_id=customer_id)
+    initial_input = AgentState(
+        messages=[HumanMessage(content="Briefly introduce yourself and ask how you can help the customer today.")],
+        customer_id=customer_id
+        )
 
+    transcribed_text = ""
     while True:
-        # Record audio, transcribe, and add the human message to the state
-        print("\n\nSpeak now, then press Enter to stop recording...")
-        transcribed_text = await record_audio_until_stop()
-        initial_input.messages.append(HumanMessage(content=transcribed_text))
-
-        # check exit condition
-        if transcribed_text.lower().count("exit") or transcribed_text.lower().count("quit"):
-            print("\nExit command received. Ending conversation.")
-            break
-
-        print("\n ---- You ---- \n\n", transcribed_text, "\n")
-
-        print("\n ---- Assistant ---- ")
+        print("\n ---- Assistant ---- \n")
         async for response in stream_graph_response(
             input = initial_input,
             graph = agent_graph,
@@ -102,6 +94,18 @@ async def main():
         last_message = thread_state.values.get("messages")[-1]
         if isinstance(last_message, AIMessage):
             await play_audio(last_message.content)
+
+        # check exit condition
+        if transcribed_text.lower().count("exit") or transcribed_text.lower().count("quit"):
+            print("\n\nExit command received. Ending conversation.\n\n")
+            break
+
+        # Record audio, transcribe, and add the human message to the state
+        print("\n\nSpeak now, then press Enter to stop recording...")
+        transcribed_text = await record_audio_until_stop()
+        initial_input.messages.append(HumanMessage(content=transcribed_text))
+
+        print("\n ---- You ---- \n\n", transcribed_text, "\n")
 
 
 if __name__ == "__main__":
