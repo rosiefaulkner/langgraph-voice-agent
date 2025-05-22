@@ -89,7 +89,6 @@ class Agent:
         return Image(self.graph.get_graph().draw_mermaid_png())
 
 agent = Agent()
-agent_graph = agent.build_graph()
 
 if __name__ == "__main__":
     agent.draw_graph()
