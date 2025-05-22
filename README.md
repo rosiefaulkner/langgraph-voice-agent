@@ -45,30 +45,17 @@ git clone https://github.com/yourusername/langgraph-voice-agent.git
 cd langgraph-voice-agent
 ```
 
-### 2. Set up a virtual environment
+### 2. Set up a virtual environment and install dependencies
+
+(Recommended) use [uv](https://github.com/uvlabs/uv) for dependency management
+
+Setup the venv in your project directory and install all dependencies with one command.
 
 ```bash
-# Create a virtual environment
-python -m venv .venv
-
-# Activate the virtual environment
-# On Windows:
-.venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
+uv sync
 ```
 
-### 3. Install dependencies
-
-```bash
-# Install uv package manager (recommended)
-pip install uv
-
-# Install dependencies
-uv pip install -e .
-```
-
-### 4. Set up environment variables
+### 3. Set up environment variables
 
 Create a `.env` file in the root directory with the following variables:
 
@@ -77,7 +64,7 @@ OPENAI_API_KEY=your_openai_api_key
 SUPABASE_URI=postgresql://postgres:password@db.example.supabase.co:5432/postgres
 ```
 
-### 5. Run the application
+### 4. Run the application
 
 ```bash
 python main.py
@@ -144,6 +131,9 @@ async def play_audio(message: str):
 
 ## 📚 Learning Resources
 
+- [Intro to Langgraph](https://youtu.be/31JoTDm7jkM)
+- [Deploy Langgraph Agents](https://youtu.be/SGt786ne_Mk)
+- [MCP with Langgraph Agents](https://youtu.be/F9mgEFor0cA)
 - [Langgraph Documentation](https://python.langchain.com/docs/langgraph/)
 - [OpenAI API Documentation](https://platform.openai.com/docs/introduction)
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction)
