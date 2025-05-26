@@ -41,7 +41,7 @@ Luna is a voice-enabled AI assistant built with Langgraph that helps users manag
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/langgraph-voice-agent.git
+git clone https://github.com/rosiefaulkner/langgraph-voice-agent.git
 cd langgraph-voice-agent
 ```
 
@@ -129,11 +129,8 @@ async def play_audio(message: str):
         # ...
 ```
 
-## 📚 Learning Resources
+## 📚 Resources
 
-- [Intro to Langgraph](https://youtu.be/31JoTDm7jkM)
-- [Deploy Langgraph Agents](https://youtu.be/SGt786ne_Mk)
-- [MCP with Langgraph Agents](https://youtu.be/F9mgEFor0cA)
 - [Langgraph Documentation](https://python.langchain.com/docs/langgraph/)
 - [OpenAI API Documentation](https://platform.openai.com/docs/introduction)
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction)
