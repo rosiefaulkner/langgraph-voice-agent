@@ -1,7 +1,7 @@
 import logging
 # Configure logging to suppress HTTP request logs
 logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.getLogger("openai").setLevel(logging.WARNING)
+logging.getLogger("google_genai").setLevel(logging.WARNING)
 
 from langchain_core.messages import AIMessage, AIMessageChunk, HumanMessage
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -63,9 +63,9 @@ async def stream_graph_response(
 
 async def main():
     config = {"configurable": {"thread_id": "thread-1"}}
-    customer_id = "e6535c6e-d9a4-4e95-a100-8224494fa01f"
+    customer_id = "6e1a6130-5be4-4778-92a9-b86dc5f16750"
 
-    # Get tools from our MCP server
+    # Get tools from our Gemini-compatible MCP server
     client = MultiServerMCPClient(connections=mcp_config["mcpServers"])
     tools = await client.get_tools()
 
@@ -75,28 +75,28 @@ async def main():
     initial_input = AgentState(
         messages=[HumanMessage(content="Briefly introduce yourself and ask how you can help the customer today.")],
         customer_id=customer_id
-        )
+    )
 
     transcribed_text = ""
     while True:
         print("\n ---- Assistant ---- \n")
         async for response in stream_graph_response(
-            input = initial_input,
-            graph = agent_graph,
-            config = config
-            ):
+            input=initial_input,
+            graph=agent_graph,
+            config=config
+        ):
             print(response, end="", flush=True)
 
         # Get the latest state
         thread_state = agent_graph.get_state(config=config)
-        
+
         # Play the assistant's response
         last_message = thread_state.values.get("messages")[-1]
         if isinstance(last_message, AIMessage):
             await play_audio(last_message.content)
 
-        # check exit condition
-        if transcribed_text.lower().count("exit") or transcribed_text.lower().count("quit"):
+        # Check exit condition
+        if "exit" in transcribed_text.lower() or "quit" in transcribed_text.lower():
             print("\n\nExit command received. Ending conversation.\n\n")
             break
 
@@ -113,3 +113,5 @@ if __name__ == "__main__":
     import nest_asyncio
     nest_asyncio.apply()
     asyncio.run(main())
+
+
